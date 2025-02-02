@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
 import { Box, Grid, CircularProgress, ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
 import Sidebar from "../components/Sidebar";
 import Pagination from "../components/Pagination";
+import { fetchProducts, fetchProductCategories } from './../utils/api'; // Import API functions
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -19,20 +19,22 @@ const Home = () => {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    axios.get("https://fakestoreapi.com/products").then((res) => {
-      setProducts(res.data);
+    const fetchData = async () => {
+      const productsData = await fetchProducts();  
+      setProducts(productsData);
       setLoading(false);
-    });
 
-    axios.get("https://fakestoreapi.com/products/categories").then((res) => {
-      setCategories(res.data);
-    });
+      const categoriesData = await fetchProductCategories(); 
+      setCategories(categoriesData);
+    };
+
+    fetchData();
   }, []);
 
   const handleCategoryChange = (category) => {
     setSelectedCategories((prevSelected) =>
       prevSelected.includes(category)
-        ? prevSelected.filter((c) => c !== category)
+        ? prevSelected.filter((item) => item !== category)
         : [...prevSelected, category]
     );
   };
@@ -50,7 +52,6 @@ const Home = () => {
   const startIndex = (currentPage - 1) * productsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
 
-  // Dark Mode Theme Configuration
   const theme = useMemo(
     () =>
       createTheme({

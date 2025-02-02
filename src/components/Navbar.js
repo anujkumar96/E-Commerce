@@ -4,7 +4,6 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import {clientId} from './../utils/constants'
 
 const Navbar = ({ isLoggedIn, setIsLoggedIn, searchTerm, setSearchTerm, darkMode }) => {
-  console.log("darkMode",darkMode );
   const responseGoogle = (response) => {
     if (response.credential) {
       console.log("Google login successful:", response);
